@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="escudo.png">
+    <script
+      src="https://kit.fontawesome.com/54d16d70c9.js"
+      crossorigin="anonymous"
+    ></script>
+    <link href="styles.css" rel="stylesheet" />
+    <script src="common.js" defer type="module"></script>
+    <script src="https://cdn.plot.ly/plotly-3.0.1.min.js" charset="utf-8"></script>
+    <script src="estadisticas.js" defer type="module"></script>
+    <title>Formulación Química</title>
+  <body>
+    <nav>
+      <a href="index" class="">
+        <i class="fa-solid fa-house"></i>
+      </a>
+      <a href="valencias">
+        <i class="fa-solid fa-atom"></i>
+      </a>
+      <a href="inorganica">
+        <i class="fa-solid fa-flask"></i>
+      </a>
+
+      <a href="estadisticas" id="menuStats" class="active hidden">
+        <i class="fa-solid fa-chart-simple"></i>
+      </a>
+
+      <a href="admin" id="menuAdmin" class="hidden">
+        <i class="fa-solid fa-user-gear"></i>
+      </a>
+
+      <div class="user">
+        <img id="userLogo" src="./user-solid.svg" />
+        <span class="sessionOn hidden"></span>
+        <button id="session">Iniciar sesión</button>
+      </div>
+
+    </nav>
+    <main class="index">
+      <h2>Estadísticas</h2>
+      <h3 id="user"></h3>
+      <h4>Valencias</h4>
+      <div>
+        <strong>Número de exámenes realizados:</strong>
+        <span id="numExamValUser"></span>
+      </div>
+      <div>
+        <strong>Número de preguntas realizadas:</strong>
+        <span id="numPregsValUser"></span>
+      </div>
+      <div>
+        <strong>Número de preguntas correctas:</strong>
+        <span id="numCorrValUser"></span>
+      </div>
+      <h4>Formulación Inorgánica</h4>
+      <div>
+        <strong>Número de exámenes realizados:</strong>
+        <span id="numExamInorUser"></span>
+      </div>
+      <div>
+        <strong>Número de preguntas realizadas:</strong>
+        <span id="numPregsInorUser"></span>
+      </div>
+      <div>
+        <strong>Número de preguntas correctas:</strong>
+        <span id="numCorrInorUser"></span>
+      </div>
+      <div id="typesPlot"></div>
+      <h3>De todo el mundo</h3>
+      <h4>Valencias</h4>
+      <div>
+        <strong>Número de exámenes realizados:</strong>
+        <span id="numExamValGlobal"></span>
+      </div>
+      <div>
+        <strong>Número de preguntas realizadas:</strong>
+        <span id="numPregsValGlobal"></span>
+      </div>
+      <div>
+        <strong>Número de preguntas correctas:</strong>
+        <span id="numCorrValGlobal"></span>
+      </div>
+      <h4>Formulación Inorgánica</h4>
+      <div>
+        <strong>Número de exámenes realizados:</strong>
+        <span id="numExamInorGlobal"></span>
+      </div>
+      <div>
+        <strong>Número de preguntas realizadas:</strong>
+        <span id="numPregsInorGlobal"></span>
+      </div>
+      <div>
+        <strong>Número de preguntas correctas:</strong>
+        <span id="numCorrInorGlobal"></span>
+      </div>
+    </main>
+  </body>
+</html>

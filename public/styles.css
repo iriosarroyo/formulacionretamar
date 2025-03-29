@@ -1,0 +1,310 @@
+*{
+    box-sizing: border-box;
+}
+:root{
+    --color1: 221, 221, 221;
+    --color2: 28, 40, 51;
+    --color3: 197, 73, 73;
+    --color4: 55,169,75;
+}
+
+html, body {
+    margin: 0;
+    font: 16px calibri;
+    background-color: rgb(var(--color1));
+    color: rgb(var(--color2));
+}
+
+button, input, select {
+    font: inherit;
+    width: 100%;
+    border-radius: 10px;
+    background-color: rgb(var(--color2));
+    color: rgb(var(--color1));
+    margin: 0;
+    padding: 3px 5px;
+    border:none;
+    text-align: center;
+}
+
+input {
+    font-size: 0.75em;
+}
+
+label{
+    font-weight: bold;
+}
+
+button:focus, input:focus, select:focus {
+    outline: 1.5px solid #9db4d5;
+}
+
+button{
+    cursor: pointer;
+}
+
+.delete{
+    padding: 0;
+    color:rgb(var(--color3));
+    background-color: transparent;
+}
+
+
+.error {
+    color:rgb(var(--color3));
+    font-size: small;
+}
+
+nav{
+    width: 100%;
+    background-color: rgb(var(--color2));
+    display: flex;
+    position: sticky;
+    top: 0;
+    z-index: 1
+}
+
+nav > a {
+    display: block;
+    color: rgb(var(--color1));
+    text-decoration: none;
+    font-size: 25px;
+    padding: 3px 5px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+nav > a.active {
+    color: rgb(var(--color2));
+    background-color: rgb(var(--color1));
+}
+
+nav > a:hover {
+    background-color: #545d66;
+    color: rgb(var(--color1));
+}
+
+.timer {
+    width: max-content;
+    position:fixed;
+    z-index: 1;
+    font-size: 20px;
+    padding: 3px 5px;
+}
+
+.timer.alert > span{
+    color: rgb(var(--color3));
+    animation: blink 1s infinite;
+}
+
+.timer:has(#globalTimer){
+    bottom: 0;
+    left: 0;
+}
+
+.timer:has(#timerPerQuestion){
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.switch{
+    cursor: pointer;
+}
+
+.switch > i {
+    margin-right: 5px;
+}
+
+input[type="checkbox"]:checked ~ .fa-square {
+    display: none;
+}
+input[type="checkbox"]:not(:checked) ~ .fa-square-check {
+    display: none;
+}
+
+#config button, #exam button{
+    width: 100px;
+    margin: auto;
+    display: block;
+}
+
+#exam button:disabled{
+    display: none;
+}
+
+.question {
+    display: grid;
+    grid-template-columns: minmax(100px, max-content) minmax(100px, 1fr);
+    column-gap: 5px;
+    grid-template-areas:
+        "a b"
+        "error error";
+    margin-bottom: 20px;
+}
+
+.question > span {
+    grid-area: error;
+}
+
+#config, #exam{
+    padding: 10px 20px;
+    max-width: 600px;
+    margin: auto;
+    font-size: 14pt;
+}
+
+#config input, #exam input{
+    font-size: 14pt;
+}
+
+#config label, #config strong{
+    margin: 10px 0 2px 0;
+    display: block;
+}
+
+#questions{
+    padding: 10px 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(max(calc(50% - 5px), 200px), 1fr));
+    column-gap: 10px;
+}
+
+.incorrect {
+    color: rgb(var(--color3));
+}
+
+.question strong {
+    hyphens: auto;
+}
+
+.incorrect > input {
+    border: 2px solid rgb(var(--color3));
+    pointer-events: none;
+}
+
+.correct {
+    color: rgb(var(--color4));
+}
+
+
+.correct > input {
+    border: 2px solid rgb(var(--color4));
+    pointer-events: none;
+}
+
+
+#progressBar {
+    width: 100%;
+    height: 15px;
+    background-color: rgb(var(--color2));
+    border-radius: 25px;
+    overflow: hidden;
+}
+
+#progressBar >  #progress{
+    height: 100%;
+    width: 0%;
+    background-color: rgb(var(--color4));
+    border-radius: 25px;
+    transition: width 0.5s;
+}
+
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+.selectionButtons{
+    text-align: center;
+}
+.selectionButtons > #seleccionarTodo, .selectionButtons > #seleccionarNada{
+    display: inline-block;
+    margin: 5px 10px;
+    width: auto;
+    padding: 2px 10px;
+}
+
+#seleccion{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.user{
+    display: inline-block;
+    width: 100%;
+    text-align: right;
+    position: relative;
+    height: 40px;
+}
+
+img#userLogo {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    background-color: rgb(var(--color1));
+    padding: 1px;
+}
+
+#session{
+    position: absolute;
+    z-index: 1;
+    top: 40px;
+    right: 0;
+    width: max-content;
+    padding: 10px 20px;
+    display: none;
+}
+
+.sessionOn{
+    background-color: limegreen;
+    border-radius: 50%;
+    height: 10px;
+    width: 10px;
+    position: absolute;
+    right: 0px;
+    top: 30px;
+    display: block;
+}
+
+.user:active > #session,
+.user:focus > #session,
+.user:hover > #session{
+    display: block;
+}
+
+
+footer{
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: rgb(var(--color2));
+    color: rgb(var(--color1));
+    padding: 0px 10px;
+}
+
+footer button{
+    display: inline-block;
+    width: max-content;
+    background-color: rgb(var(--color1));
+    color: rgb(var(--color2))
+}
+.hidden {
+    display: none;
+}
+
+.index{
+    margin:auto;
+    padding: 10px 20px;
+    max-width: 600px;
+    text-align: center;
+}

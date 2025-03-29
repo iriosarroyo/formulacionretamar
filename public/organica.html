@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="escudo.png">
+    <script
+      src="https://kit.fontawesome.com/54d16d70c9.js"
+      crossorigin="anonymous"
+    ></script>
+    <link href="styles.css" rel="stylesheet" />
+    <script src="common.js" defer type="module"></script>
+    <script src="organica.js" defer type="module"></script>
+    <title>Formulación Química</title>
+  <body>
+    <nav>
+        <nav>
+            <a href="index">
+              <i class="fa-solid fa-house"></i>
+            </a>
+            <a href="valencias">
+              <i class="fa-solid fa-atom"></i>
+            </a>
+            <a href="inorganica" class="active">
+              <i class="fa-solid fa-flask"></i>
+            </a>
+            <a href="estadisticas" id="menuStats" class="hidden">
+              <i class="fa-solid fa-chart-simple"></i>
+            </a>
+      
+            <a href="admin" id="menuAdmin" class="hidden">
+              <i class="fa-solid fa-user-gear"></i>
+            </a>
+      
+            <div class="user">
+              <img id="userLogo" src="./user-solid.svg" />
+              <span class="sessionOn hidden"></span>
+              <button id="session">Iniciar sesión</button>
+            </div>
+          </nav>
+    </nav>
+    <main>
+        <!-- <form id="config">
+            <h2>Configuración</h2>
+            <h3>Formulación inorgánica</h3>
+            <label for="questionsNumber">Número de preguntas:</label>
+            <input type="number" id="questionsNumber" min="1" max="20" value="10" required />
+            <label for="timePerQuestion">Tiempo por pregunta (en segundos):</label>
+            <input type="number" id="timePerQuestion" min="1" max="320" value="20" required/>
+            <strong>Tiempo total (hh:mm:ss):</strong>
+            <span id="totalTime">00:03:20</span>
+            <strong>Selección de elementos</strong>
+            <div class="selectionButtons">
+              <button type="button" id="seleccionarTodo">Seleccionar todo</button>
+              <button type="button" id="seleccionarNada">Eliminar selección</button>
+            </div>
+            <div id="seleccion"></div>
+            <button>Empezar</button>
+        </form>
+        <form id="exam" class="hidden">
+            <h2>Formulación inorgánica</h2>
+            <p>Formula o nombra los siguientes compuestos según corresponda.</p>
+            <div id="numOfQuestions">
+                <strong>Pregunta <span id="currNum"></span> de <span class="totalNum"></span></strong>
+            </div>
+            <div id="progressBar">
+                <div id="progress"></div>
+            </div>
+            <div id="correctAnswers" class="hidden">
+                <strong>Correctas: <span id="corrNum"></span> de <span class="totalNum"></span></strong>
+            </div>
+            <div id="questions"></div>
+            <button id="next">Siguiente</button>
+            <button id="back" type="button" disabled>Volver</button>
+        </form>
+    </main>
+    <div class="timer hidden" id="globalTimerContainer">
+        <strong>Tiempo total:</strong>
+        <span id="globalTimer"></span>
+    </div>
+    <div class="timer hidden" id="timerPerQuestionContainer">
+        <strong>Tiempo por pregunta:</strong>
+        <span id="timerPerQuestion"></span>
+    </div> -->
+    <footer>
+      <p>
+        <strong>Para los de 2º bach:</strong> si no inicias sesión, no se te guardarán las estadísticas y no te sumarán puntos en el examen.
+        <button id="ocultar">Ocultar</button>
+      </p>
+    </footer>
+  </body>
+</html>
