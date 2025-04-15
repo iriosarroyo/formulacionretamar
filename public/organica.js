@@ -1,5 +1,6 @@
 import { getAtomsOfMolec } from "./molecules.js";
 import { pickRandom, rdnBetween, rndBin } from "./random.js";
+import { charge2str } from "./tools.js";
 
 const gruposFuncionales = {
   alcohol: { n: 1, terminacion: "ol", grupo: "OH" },
@@ -107,7 +108,7 @@ const genRamificacion = (n, hidrogens, consumes, forceStart, prob = 0.5) => {
   while (rdn < prob && sum !== 0 && total < MAX_TRIES * 4) {
     for (let i = 0; i < MAX_TRIES; i++) {
       total += 1;
-      const idx = rdnBetween(1, n);
+      const idx = rdnBetween(2, n - 1);
       if (forceStart) {
         if (rams.length === 0 && idx > Math.floor((n + 1) / 2)) continue;
         if (
@@ -120,7 +121,9 @@ const genRamificacion = (n, hidrogens, consumes, forceStart, prob = 0.5) => {
       if (hidrogens[idx - 1] < consumes) continue;
       hidrogens[idx - 1] -= consumes;
       sum -= consumes;
-      const length = rndBin(4, 0.15) + 1;
+      // Ramifications can't be longer than the chain itself
+      // Limit to 4 carbons (butilo)
+      const length = Math.min(rdnBetween(1, Math.min(idx - 1, n - idx)), 4);
       rams.push({ pos: idx, length });
       break;
     }
@@ -135,7 +138,6 @@ const genRamificacion = (n, hidrogens, consumes, forceStart, prob = 0.5) => {
   });
   return rams;
 };
-
 const createCompound = () => {
   const cadenaPrincipal = rndBin(9, 0.45) + 1;
   const cadenaSecundaria = rndBin(9, 0.45) + 1;
@@ -249,18 +251,31 @@ const nombreCompuesto = (compound) => {
   }
   let nombre = "";
   if (ramificaciones?.length) {
-    const ramGroups = Object.groupBy(ramificaciones, ({ length }) => length);
-    Object.entries(ramGroups).forEach(([length, group]) => {
-      if (nombre) nombre += "-";
-      nombre += `${group.map(({ pos }) => pos).join(",")}-${
-        reps[group.length - 1]
-      }${raiz[parseInt(length) - 1]}il`;
-    });
+    const ramsAndOH = ramificaciones.concat(
+      hidroxis?.map((x) => ({ pos: x, length: "OH" })) ?? []
+    );
+    const ramGroups = Object.groupBy(ramsAndOH, ({ length }) => length);
+    Object.entries(ramGroups)
+      .toSorted(([, a], [, b]) => {
+        const { length: lenA } = a[0];
+        const { length: lenB } = b[0];
+        const rootA = lenA === "OH" ? "hidroxi" : raiz[lenA - 1];
+        const rootB = lenB === "OH" ? "hidroxi" : raiz[lenB - 1];
+        return rootA.localeCompare(rootB);
+      })
+      .forEach(([length, group]) => {
+        if (nombre) nombre += "-";
+        const positions = group.map(({ pos }) => pos).join(",");
+        const prefix = reps[group.length - 1];
+        const root =
+          length === "OH" ? "hidroxi" : `${raiz[parseInt(length) - 1]}il`;
+        nombre += `${positions}-${prefix}${root}`;
+      });
   }
-  if (hidroxis?.length) {
-    if (nombre) nombre += "-";
-    nombre += `${hidroxis.join(",")}-${reps[hidroxis.length - 1]}hidroxi`;
-  }
+  // if (hidroxis?.length) {
+  //   if (nombre) nombre += "-";
+  //   nombre += `${hidroxis.join(",")}-${reps[hidroxis.length - 1]}hidroxi`;
+  // }
   nombre += raiz[cadenaPrincipal - 1];
   if (tripleBonds?.length) {
     nombre += `-${tripleBonds.join(",")}-${reps[tripleBonds.length - 1]}in`;
@@ -353,17 +368,133 @@ const formulaCompuesto = (compound) => {
     comp[0] = comp[0].split("").toReversed().join("");
 
   if (grupoFuncional === "ester")
-    comp[cadenaPrincipal - 1] += fullRamificacion(cadenaSecundaria);
+    comp[cadenaPrincipal - 1] += fullRamificacion(cadenaSecundaria, false);
 
   return comp.join("");
+};
+
+const LETTER_WIDTH = 20;
+const LETTER_HEIGHT = 20;
+/**
+ *
+ * @param {string} formula
+ * @param {HTMLCanvasElement} canvas
+ */
+const drawMolecule = (formula, canvas) => {
+  const atoms = getAtomsOfMolec(formula, true);
+  const { atoms: atomList, charge } = atoms;
+  const points = [];
+  let x = -1;
+  let jumpNextH = false;
+  let defaultY = 0;
+  atomList.forEach(({ elem, num, atoms: atomsGroup }, i) => {
+    console.log(elem, atomsGroup);
+    if (atomsGroup) return;
+    if (elem === "C") {
+      if (points.length && !["-", "=", "≡"].includes(points.at(-1).text))
+        points.push({ y: defaultY, x: ++x, text: "-" });
+      points.push({ y: defaultY, x: ++x, text: elem });
+    } else if (elem === "O") {
+      if (i === 0) {
+        points.push({ y: defaultY - 1, x: ++x, text: elem });
+        points.push({ y: defaultY + 1, x, text: "H" });
+        jumpNextH = true;
+        points.push({ y: defaultY - 0.5, x: ++x, text: "=", rotation: 45 });
+        points.push({ y: defaultY + 0.5, x, text: "-", rotation: -45 });
+      } else if (
+        atomList.at(i - 1)?.elem === "O" &&
+        atomList.at(i + 1)?.elem === "C"
+      ) {
+        points.push({ y: defaultY, x: ++x, text: elem });
+      } else if (["C", "O"].includes(atomList.at(i + 1)?.elem)) {
+        points.push({ y: defaultY - 2, x, text: elem });
+        points.push({ y: defaultY - 1, x, text: "=", rotation: 90 });
+      } else if (atomList.at(i + 1)?.elem === "H") {
+        jumpNextH = true;
+        points.push({ y: defaultY + 1, x, text: "-", rotation: 90 });
+        points.push({ y: defaultY + 2, x, text: elem });
+        points.push({ y: defaultY + 2, x: x + 1, text: "H" });
+      } else {
+        points.push({ y: defaultY, x: ++x, text: elem });
+      }
+    } else if (elem === "H") {
+      if (jumpNextH) return (jumpNextH = false);
+      if (atomList.at(i + 1)?.elem === "O") return;
+      points.push({
+        y: defaultY,
+        x: ++x,
+        text: elem,
+        subindex: num <= 1 ? undefined : num,
+      });
+    } else points.push({ y: defaultY, x: ++x, text: elem });
+  });
+
+  if (charge) {
+    points.push({
+      y: defaultY,
+      x,
+      text: "",
+      superindex: charge2str(charge),
+    });
+  }
+
+  const ys = points.map(({ y }) => y);
+  const minY = Math.min(...ys) - 1.5;
+  const maxY = Math.max(...ys);
+  const xs = points.map(({ x }) => x);
+  const minX = Math.min(...xs);
+  const maxX = Math.max(...xs);
+  const ctx = canvas.getContext("2d");
+  ctx.font = "20px Arial";
+  const formulaWidth = ctx.measureText(formula).width;
+  const width = Math.max((maxX - minX + 2) * LETTER_WIDTH, formulaWidth);
+  const height = (maxY - minY + 2) * LETTER_HEIGHT;
+  canvas.width = width;
+  canvas.height = height;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.font = "20px Arial";
+
+  points.forEach(({ x, y, text, subindex, superindex, rotation }, i) => {
+    ctx.save();
+    ctx.translate((x + 0.5 - minX) * LETTER_WIDTH, (y - minY) * LETTER_HEIGHT);
+    if (rotation) ctx.rotate((rotation * Math.PI) / 180);
+    ctx.fillText(text, 0, 0);
+    ctx.restore();
+    ctx.strokeStyle = `hsl(${(120 * i) % 360}deg, 100%, 50%)`;
+    // ctx.beginPath();
+    // ctx.rect(
+    //   (x - minX) * LETTER_WIDTH,
+    //   (y - minY - 0.5) * LETTER_HEIGHT,
+    //   LETTER_WIDTH,
+    //   LETTER_HEIGHT
+    // );
+    // ctx.stroke();
+    if (subindex || superindex) {
+      ctx.font = "10px Arial";
+      ctx.textBaseline = subindex ? "hanging" : "ideographic";
+      ctx.fillText(
+        subindex ?? superindex,
+        (x - minX) * LETTER_WIDTH + 20,
+        (y - minY) * LETTER_HEIGHT
+      );
+      ctx.textBaseline = "middle";
+      ctx.font = "20px Arial";
+    }
+  });
+  ctx.fillText(formula, canvas.width / 2, LETTER_HEIGHT * 0.5);
 };
 
 console.log(
   Array(10)
     .fill(0)
     .map(() => {
+      const canvas = document.createElement("canvas");
+      document.body.append(canvas);
       const comp = createCompound();
       const form = formulaCompuesto(comp);
+      drawMolecule(form, canvas);
       return [comp, nombreCompuesto(comp), form, getAtomsOfMolec(form)];
     })
 );

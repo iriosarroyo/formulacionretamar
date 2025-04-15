@@ -30,3 +30,8 @@ export const enableInput = (input) => {
   input.disabled = false;
   abortControllers[input.id]?.abort();
 };
+export const charge2str = (charge) => {
+  if (charge === 0) return "";
+  if (Math.abs(charge) === 1) return charge > 0 ? "+" : "-";
+  return charge > 0 ? `${charge}+` : `${Math.abs(charge)}-`;
+};

@@ -111,7 +111,27 @@ export const sendExamToDB = (preguntas, correctas) => {
   return Promise.allSettled([
     pushExam(preguntas, correctas),
     updateGlobalAndUserStats(preguntas.length, correctas),
-  ]).catch(console.log);
+  ]).then((results) => {
+    const [pushResult, updateResult] = results;
+    if (pushResult.status === "rejected" && pushResult.reason !== "No user") {
+      alert(
+        `Error al guardar el examen: ${pushResult.reason}. 
+Código de error: 001-${preguntas.length}-${correctas}.
+Envía este código a inigo.rios@retamar.es`
+      );
+    }
+    if (
+      updateResult.status === "rejected" &&
+      updateResult.reason !== "No user"
+    ) {
+      alert(
+        `Error al guardar las estadísticas: ${updateResult.reason}. 
+Código de error: 002-${preguntas.length}-${correctas}.
+Envía este código a inigo.rios@retamar.es`
+      );
+    }
+    return results;
+  });
 };
 
 export const onStats = (path, idEnd) => {

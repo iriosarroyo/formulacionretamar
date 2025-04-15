@@ -6,6 +6,7 @@ import {
   getAtomsOfMolec,
   isName,
 } from "./molecules.js";
+import { charge2str } from "./tools.js";
 
 const suffixHTML = (num) => `<sub>${num}</sub>`;
 const suffixWord = (num) => `<mn>${num}</mn>`;
@@ -26,12 +27,6 @@ const charge = {
   HTML: (charge) => `<sup>${charge}</sup>`,
   word: (charge) => `<msup><mn>${charge}}</mn></msup>`,
   str: (charge) => `[${charge}]`,
-};
-
-const charge2str = (charge) => {
-  if (charge === 0) return "";
-  if (Math.abs(charge) === 1) return charge > 0 ? "+" : "-";
-  return charge > 0 ? `${charge}+` : `${Math.abs(charge)}-`;
 };
 
 const molecule2str = (molecule, mode) => {

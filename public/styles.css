@@ -308,3 +308,7 @@ footer button{
     max-width: 600px;
     text-align: center;
 }
+
+canvas{
+    display: block;
+}

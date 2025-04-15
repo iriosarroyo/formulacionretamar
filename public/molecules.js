@@ -23,10 +23,14 @@ const addOxidationNumbers = (molecule) => {
   return res;
 };
 
-export const getAtomsOfMolec = (molecule) => {
+export const getAtomsOfMolec = (molecule, addDoubleAndTriple = false) => {
   const REGEX_ELEM =
-    /(?<elem>[A-Z][a-z]?|e)(?<num>[0-9]*)|\((?<grp>.+)\)(?<grpNum>[0-9]+)/g;
-  const matches = molecule.matchAll(REGEX_ELEM);
+    /(?<elem>[A-Z][a-z]?|e)(?<num>[0-9]*)|\((?<grp>.+?)\)(?<grpNum>[0-9]+)/g;
+  const REGEX_ELEM_ADD =
+    /(?<elem>[A-Z=≡][a-z]?|e)(?<num>[0-9]*)|\((?<grp>.+?)\)(?<grpNum>[0-9]+)/g;
+  const matches = molecule.matchAll(
+    addDoubleAndTriple ? REGEX_ELEM_ADD : REGEX_ELEM
+  );
   let currMatch = matches.next();
   const result = {
     atoms: [],
